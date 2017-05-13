@@ -13,8 +13,7 @@ server.connection({
 });
 
 server.register({
-  register: require('./angular-quickstart'),
-  routes: { prefix: '/quickstart' }
+  register: require('./angular-4-quickstart')
 })
 
 server.register({

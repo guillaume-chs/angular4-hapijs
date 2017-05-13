@@ -6,7 +6,7 @@ var Path = require('path');
 
 // Shortcut to app main page
 var index_config = {
-  description: 'Angular Quickstart App Index',
+  description: 'Angular 4 Quickstart App Index',
   notes: 'The main page for the Angular quickstart app',
   handler: {
     file: `${__dirname}/index.html`
@@ -84,7 +84,7 @@ var node_module_routes = node_module_files.map((full_file_name) => {
   }
 });
 
-// join the rote lists
+// join the route lists
 var static_routes = app_routes.concat(node_module_routes);
 
 
@@ -106,6 +106,6 @@ exports.register = (server, options, next) => {
 };
 
 exports.register.attributes = {
-  name: 'angular-quickstart',
+  name: 'angular-4-quickstart',
   once: true
 };

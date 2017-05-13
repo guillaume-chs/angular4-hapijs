@@ -1,0 +1,8 @@
+{
+  "server": {
+    "baseDir": "angular-4-quickstart/",
+    "routes": {
+      "/node_modules": "node_modules"
+    }
+  }
+}
