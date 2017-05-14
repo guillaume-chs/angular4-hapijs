@@ -1,42 +1,33 @@
-/**
- * Hapi Plugin Index
- */
+// Require Hapi.js plugins
 const Path = require('path');
+const Joi = require('joi');
 
-// Shortcut to app main page
-const index_config = {
-  description: 'Angular 4 Quickstart App Index',
-  notes: 'The main page for the Angular quickstart app',
-  handler: {
-    file: `${__dirname}/index.html`
-  }
-};
 
-// Build the routes for the local app files
+/***************************
+ ******* APPLICATION *******
+ ***************************/
+const app_directory = 'app';
 const app_files = [
   'index.html',
   'styles.css',
-  'systemjs.config.js',
-  'app/main.js',
-  'app/app.module.js',
-  'app/app.component.js'
-]
-
-const app_routes = app_files.map((full_file_name) => {
-  return {
-    method: 'GET',
-    path: `/${full_file_name}`,
-    config: {
-      description: `Map to file:  ${full_file_name}`,
-      handler: {
-        file: `${__dirname}/${full_file_name}`
-      }
+  'systemjs.config.js'
+];
+const app_routes = app_files.map(file => ({
+  method: 'GET',
+  path: `/${file}`,
+  config: {
+    description: `Mapping: ${file}`,
+    handler: {
+      file: Path.join(__dirname, file)
     }
   }
-});
+}));
 
-// Build the routes for the node module files
-const node_module_files = [
+
+/***************************
+ ******** ANGULAR 4 ********
+ ***************************/
+const dependencies_files = [
   'core-js/client/shim.min.js',
   'zone.js/dist/zone.js',
   'systemjs/dist/system.src.js',
@@ -82,27 +73,17 @@ const node_module_files = [
   'rxjs/util/errorObject.js',
   'rxjs/util/UnsubscriptionError.js',
   'rxjs/util/subscribeToResult.js'
-]
-
-const node_module_routes = node_module_files.map((full_file_name) => {
-  const filename = Path.basename(full_file_name);
-  const source = require.resolve(full_file_name);
-
-  return {
-    method: 'GET',
-    path: `/node_modules/${full_file_name}`,
-    config: {
-      description: `Mapping ${filename}`,
-      handler: {
-        file: source
-      }
+];
+const dependencies_routes = dependencies_files.map(file => ({
+  method: 'GET',
+  path: `/node_modules/${file}`,
+  config: {
+    description: `Mapping: ${Path.basename(file)}`,
+    handler: {
+      file: require.resolve(file)
     }
   }
-});
-
-// join the route lists
-const static_routes = app_routes.concat(node_module_routes);
-
+}));
 
 
 /***************************
@@ -111,15 +92,44 @@ const static_routes = app_routes.concat(node_module_routes);
 exports.register = (server, options, next) => {
 
   server.register(require('inert'), (err) => {
-    if (err) { throw err; }
+    if (err) throw err;
   });
 
+  // Default route
   server.route({
     method: 'GET',
     path: '/',
-    config: index_config
+    config: {
+      description: 'Angular 4 application index',
+      handler: {
+        file: Path.join(__dirname, 'index.html')
+      }
+    }
   });
-  server.route(static_routes);
+
+  // Application & Dependencies
+  server.route(app_routes);
+  server.route({
+      method: 'GET',
+      path: `/${app_directory}/{param*}`,
+      config: {
+        description: `Mapping directory: ${app_directory}`,
+        validate: {
+          params: {
+            param: Joi.string().required().regex(/(.js|.jpg|.jpeg|.png|.html|.css)$/, "public file")
+          }
+        },
+        handler: {
+            directory: {
+                path: Path.join(__dirname, app_directory),
+                redirectToSlash: true,
+                index: false
+            }
+        }
+      }
+  });
+
+  server.route(dependencies_routes);
   next();
 };
 
