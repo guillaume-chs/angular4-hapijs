@@ -26,7 +26,8 @@ server.register({
       ]
     }
   }},
-  (err) => { if (err) { throw err; }
+  (err) => {
+    if (err) throw err;
 });
 
 if (!process.env.PRODUCTION) {
@@ -35,11 +36,11 @@ if (!process.env.PRODUCTION) {
     options: { showAuth: true }
     },
     (err) => {
-      if (err) { throw err; }
+      if (err) throw err;
   });
 }
 
 server.start((err) => {
-  if (err) { throw err; }
+  if (err) throw err;
   console.log('✅  Server is listening on ' + server.info.uri.toLowerCase());
 });
