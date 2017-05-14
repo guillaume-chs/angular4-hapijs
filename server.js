@@ -25,12 +25,10 @@ server.register({
   options: {
     ops: { interval: 600000 },
     reporters: {
-      console: [
-        { module: 'good-console'}, 'stdout'
-      ]
+      console: [ { module: 'good-console'}, 'stdout' ]
     }
-  }},
-  (err) => {
+  }
+}, (err) => {
     if (err) throw err;
 });
 
@@ -38,9 +36,8 @@ if (!process.env.PRODUCTION) {
   server.register({
     register: require('blipp'),
     options: { showAuth: true }
-    },
-    (err) => {
-      if (err) throw err;
+  }, (err) => {
+    if (err) throw err;
   });
 }
 
