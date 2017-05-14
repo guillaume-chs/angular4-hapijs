@@ -14,7 +14,11 @@ server.connection({
 
 server.register({
   register: require('./angular-4-quickstart')
-})
+});
+/*server.register({
+  register: require('./back-end'),
+  routes: { prefix: '/api' }
+});*/
 
 server.register({
   register: require('good'),
