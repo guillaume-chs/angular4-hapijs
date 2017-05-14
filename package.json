@@ -9,7 +9,8 @@
     "serve": "nodemon server.js",
     "prestart": "npm run build",
     "start": "concurrently \"npm run build:watch\" \"npm run serve\"",
-    "lint": "tslint ./angular-4-quickstart/**/*.ts -t verbose"
+    "lint": "tslint ./angular-4-quickstart/**/*.ts -t verbose",
+    "test": "echo \"no test to run, exiting\""
   },
   "keywords": [
     "Hapi",
