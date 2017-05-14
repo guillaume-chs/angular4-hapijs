@@ -1,20 +1,20 @@
-# Hapi hosting Angular QuickStart Source
+# Hapi hosting Angular 4 QuickStart Source
 
-This repository turns the [angular.io quickstart](https://angular.io/docs/ts/latest/quickstart.html) into a [Hapi](https://hapijs.com/) plugin.  It is meant to be a stating point for projects to host Angular application from a Hapi server.
+This repository turns the [angular quickstart](https://github.com/angular/quickstart) into a [Hapi](https://hapijs.com/) plugin.
+It is meant to be a stating point for projects to host Angular 4 application from a Hapi server.
 
 ## npm scripts
 
 Useful commands to get up and running are included in npm scripts defined in the `package.json`:
 
-* "start": "npm run tsc:projects && npm-run-all --parallel tsc:projectsw start:server "
-* "start:server": "nodemon server.js"
-* "tsc:projects": "tsc -p angular-quickstart"
-* "tsc:projectsw": "tsc -w -p angular-quickstart"
+* "build": "tsc -p angular-4-quickstart",
+* "serve": "nodemon server.js",
+* "start": "concurrently \"npm run build:watch\" \"npm run serve\""
 
 >__Changes from Quickstart:__ 
 > - This is a Hapi app, so lite-server is not necessary.  
 > - nodemon is used to keep the server running until it is canceled from the command line with `ctrl-c`/`cmd-c`.  
-> - `tsconfig.json` and `tslint.json` have been relocated with the app.  This means that `tsc` needs to be giving a `--project` or `-p` argument.  For adding/moving/renaming apps, make sure that the `tsc:projects` and `tsc:projectsw` scripts are updated.
+> - `tsconfig.json` has been relocated with the app.  This means that `tsc` needs to be giving a `--project` or `-p` argument. See `npm run build`.
 
 --------------
 
@@ -24,23 +24,24 @@ An `index.js` file has been added to the root directory of the Angular app, whic
 
 ```javascript
 server.register({
-  register: require('./angular-quickstart'),
-  routes: { prefix: '/quickstart' }
+  register: require('./angular-4-quickstart')
 })
 ```
 
-The `angular-quickstart` plugin provides routes in three different ways, which permits the client app access to all of the files it needs to run:
+I've provided an example of how to add another plugin, let's say a back end REST API for instance:
+
+```javascript
+server.register({
+  register: require('./backend'),
+  routes: { prefix: 'api' }
+})
+```
+
+The `angular-4-quickstart` plugin provides routes in four different ways, which permits the client app access to all of the files it needs to run:
 - A shortcut to the app specifying '/' - serves `index.html` directly
-- Serves all necessary files under in the root Angular directory
+- Serves `index.html`, `styles.css`, `systemjs.config.js` directly
+- Server all public files under in the root Angular directory.
 - Serves all necessary files in the `/node_modules` directory
-
-`index.js` creates a simple route from the url `'/'` right to `index.html`.  Then it builds routing configurations based on an array of all the necessary files it needs from the main app directory.  THEN it builds routing configurations from each file needed from inside of the node_modules directory.  Each file is called out separately so that a user has access to exactly these files and nothing else.  
-
->Note that the urls that the client app uses to `GET` files are defined by the `systemjs.config.js` and `index.html`files.  The routes set up in `index.js` were done so that no changes needed to be made to those files.
-
->In a production setup, you would likely have a script to copy all of the static to a directory where it is okay for the user to have access to the whole thing, but to keep things simple (and demonstrate way s to do routing), each file is listed and pointed to manually. 
-
-`server.js` then registers the angular-quickstart plugin, which automatically adds the routes provided, and away you go!
 
 --------------
 
@@ -50,3 +51,8 @@ The `index.js` provided should be sufficient to get any Angular app up and runni
 
 Use the `routes: { prefix: '<your app url>' }` option to host the app wherever you want.
 
+--------------
+
+## Inspired by
+
+[hapi-angular-quickstart](https://github.com/ptpaterson/hapi-angular-quickstart) (for Angular 2).
